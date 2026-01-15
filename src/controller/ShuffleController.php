@@ -1,6 +1,6 @@
 <?php
 
-class ShuffleController
+class ShuffleController extends Controller
 {
     public function run($action)
     {

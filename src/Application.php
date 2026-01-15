@@ -1,9 +1,5 @@
 <?php
 
-require_once __DIR__ . '/core/Router.php';
-require_once __DIR__ . '/core/Request.php';
-require_once __DIR__ . '/controller/ShuffleController.php';
-
 class Application
 {
     private $router;
@@ -25,7 +21,7 @@ class Application
     public function runAction($controllerName, $action)
     {
         $controllerClass = ucfirst($controllerName) . 'Controller';
-        $controller = new $controllerClass();
+        $controller = new $controllerClass($this);
         $controller->run($action);
     }
 
@@ -34,5 +30,10 @@ class Application
         return [
             '/' => ['controller' => 'shuffle', 'action' => 'index'],
         ];
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
     }
 }
