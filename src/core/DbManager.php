@@ -11,22 +11,17 @@ class DbManager
         $dbHost = $_ENV['DB_HOST'];
         $dbName = $_ENV['DB_NAME'];
         $dbUser = $_ENV['DB_USER'];
-        $dbPasswrod = $_ENV['DB_PASSWORD'];
+        $dbPassword = $_ENV['DB_PASSWORD'];
         try {
             $this->pdo = new PDO(
                 "mysql:host=$dbHost;dbname=$dbName",
                 $dbUser,
                 $dbPassword,
                 [
-                    PDO::ATTR_ERRMODE => PDO::EXCEPTION
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
                 ]);
         } catch (PDOException $e) {
             echo 'DB connect error: ' . $e->getMessasge() . PHP_EOL;
         }
-    }
-
-    public getPdo()
-    {
-        return $this->pdo;
     }
 }

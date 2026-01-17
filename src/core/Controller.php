@@ -18,7 +18,7 @@ class Controller
 
     public function render($variables, $template = null, $layout = 'layout')
     {
-        $view = new View(__DIR__ . '/../view');
+        $view = new View(__DIR__ . '/../views');
         if (is_null($template)) {
             $template = $this->actionName;
         }

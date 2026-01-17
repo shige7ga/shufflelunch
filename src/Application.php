@@ -36,6 +36,7 @@ class Application
     {
         return [
             '/' => ['controller' => 'shuffle', 'action' => 'index'],
+            '/employee' => ['controller' => 'employee', 'action' => 'index'],
         ];
     }
 

@@ -2,9 +2,10 @@
 
 class ShuffleController extends Controller
 {
-    protected function index()
+    public function index()
     {
         return $this->render([
+            'pageTitle' => 'トップ',
             'formTitle' => '操作一覧',
         ]);
     }
