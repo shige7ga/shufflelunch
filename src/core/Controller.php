@@ -15,6 +15,9 @@ class Controller
     public function run($action)
     {
         $this->actionName = $action;
+        if(!method_exists($this, $action)) {
+            throw new HttpNotFoundException();
+        }
         return $this->$action();
     }
 

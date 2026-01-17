@@ -13,6 +13,9 @@ class ShuffleController extends Controller
 
     public function create()
     {
+        if (!$this->request->isPost()) {
+            throw new HttpNotFoundException;
+        }
         $groups = $this->dbManager->getModel('Employee')->getShuffleEmployees();
         return $this->render([
             'pageTitle' => 'トップ - シャッフル結果',
