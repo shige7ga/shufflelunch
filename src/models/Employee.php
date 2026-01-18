@@ -29,4 +29,27 @@ class Employee extends DbModel
         $this->execute($sql, $params);
     }
 
+    public function validate($empNo, $empName)
+    {
+        $errors = [];
+        if (!$empNo) {
+            $errors[] = '社員番号を入力してください';
+        } elseif (!is_int($empNo) && $empNo <= 0) {
+            $errors[] = '社員番号は1以上の整数値で入力してください';
+        } elseif ($empNo >= 10000000) {
+            $errors[] = '社員番号は9,999,999以内で設定してください';
+        } else {
+            $stmt = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE emp_no = $empNo");
+            $result = $stmt->fetchColumn();
+            if ($result) {
+                $errors[] = '入力した社員番号はすでに使用されています';
+            }
+        }
+        if (!$empName) {
+            $errors[] = '社員名を入力してください';
+        } elseif (strlen($empName) > 100) {
+            $errors[] = '社員名は100文字以内で入力してください';
+        }
+        return $errors;
+    }
 }
