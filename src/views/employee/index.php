@@ -11,10 +11,12 @@
         <label for="empNo">社員番号：</label>
         <input type="number" id="empNo" name="empNo">
     </div>
-    <div>
-        <label for="empName">社員名：</label>
-        <input type="text" id="empName" name="empName">
-    </div>
+    <?php if ($actionName !== 'delete') : ?>
+        <div>
+            <label for="empName">社員名：</label>
+            <input type="text" id="empName" name="empName">
+        </div>
+    <?php endif ?>
     <input type="submit" value="<?php echo $formButton ?>">
 </form>
 <h2>社員一覧</h2>

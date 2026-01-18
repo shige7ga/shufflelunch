@@ -49,8 +49,10 @@ class Application
             '/shuffle' => ['controller' => 'shuffle', 'action' => 'create'],
             '/employee' => ['controller' => 'employee', 'action' => 'index'],
             '/employee/create' => ['controller' => 'employee', 'action' => 'create'],
+            '/employee/updateIndex' => ['controller' => 'employee', 'action' => 'updateIndex'],
             '/employee/update' => ['controller' => 'employee', 'action' => 'update'],
-            '/employee/updateAction' => ['controller' => 'employee', 'action' => 'updateAction'],
+            '/employee/deleteIndex' => ['controller' => 'employee', 'action' => 'deleteIndex'],
+            '/employee/delete' => ['controller' => 'employee', 'action' => 'delete'],
         ];
     }
 

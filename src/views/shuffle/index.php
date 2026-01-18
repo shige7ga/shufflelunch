@@ -1,6 +1,7 @@
 <h2><?php echo $formTitle ?></h2>
 <p><form action="/employee" method="post"><button>社員を登録する</button></form></p>
-<p><form action="/employee/update" method="post"><button>社員情報を更新する</button></form></p>
+<p><form action="/employee/updateIndex" method="post"><button>社員情報を更新する</button></form></p>
+<p><form action="/employee/deleteIndex" method="post"><button>社員情報を削除する</button></form></p>
 <p><form action="/shuffle" method="post"><button>シャッフルする</button></form></p>
 <h2>シャッフル結果</h2>
 <?php for ($i = 0; $i < count($groups); $i++) : ?>

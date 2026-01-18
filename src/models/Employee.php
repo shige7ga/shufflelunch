@@ -36,6 +36,13 @@ class Employee extends DbModel
         $this->execute($sql, $params);
     }
 
+    public function deleteEmployee($empNo)
+    {
+        $sql = 'DELETE FROM employees WHERE emp_no = :emp_no';
+        $params = [[':emp_no', $empNo, PDO::PARAM_INT]];
+        $this->execute($sql, $params);
+    }
+
     public function validate($empNo, $empName, $action)
     {
         $errors = [];
@@ -49,15 +56,19 @@ class Employee extends DbModel
             $stmt = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE emp_no = $empNo");
             $result = $stmt->fetchColumn();
             if ($result && $action === 'create') {
-                $errors[] = '入力した社員番号はすでに使用されています';
-            } elseif (!$result && $action === 'update') {
-                $errors[] = '入力した社員番号はまだ登録されていません';
+                $errors[] = '入力した社員番号はすでに登録されています';
+            } elseif (!$result) {
+                if ($action === 'update' || $action === 'delete') {
+                    $errors[] = '入力した社員番号は登録されていません';
+                }
             }
         }
-        if (!$empName) {
+        if ($action !== 'delete') {
+            if (!$empName) {
             $errors[] = '社員名を入力してください';
-        } elseif (strlen($empName) > 100) {
-            $errors[] = '社員名は100文字以内で入力してください';
+            } elseif (strlen($empName) > 100) {
+                $errors[] = '社員名は100文字以内で入力してください';
+            }
         }
         return $errors;
     }
