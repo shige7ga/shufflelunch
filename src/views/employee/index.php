@@ -9,12 +9,12 @@
 <form action='<?php echo $formAction ?>' method="post">
     <div>
         <label for="empNo">社員番号：</label>
-        <input type="number" id="empNo" name="empNo">
+        <input type="number" id="empNo" name="empNo" value="<?php echo $inputEmpInfo['empNo'] ?>">
     </div>
     <?php if ($actionName !== 'delete') : ?>
         <div>
             <label for="empName">社員名：</label>
-            <input type="text" id="empName" name="empName">
+            <input type="text" id="empName" name="empName" value="<?php echo $inputEmpInfo['empName'] ?>">
         </div>
     <?php endif ?>
     <input type="submit" value="<?php echo $formButton ?>">

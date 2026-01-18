@@ -4,7 +4,7 @@ class Employee extends DbModel
 {
     public function fetchEmployees()
     {
-        $sql = 'SELECT emp_no, emp_name FROM employees';
+        $sql = 'SELECT emp_no, emp_name FROM employees ORDER BY emp_no ASC';
         return $this->fetchAll($sql);
     }
 
