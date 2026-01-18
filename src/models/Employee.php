@@ -29,7 +29,14 @@ class Employee extends DbModel
         $this->execute($sql, $params);
     }
 
-    public function validate($empNo, $empName)
+    public function updateEmployee($empNo, $empName)
+    {
+        $sql = 'UPDATE employees SET emp_name = :emp_name WHERE emp_no = :emp_no';
+        $params = [[':emp_no', $empNo, PDO::PARAM_INT], [':emp_name', $empName, PDO::PARAM_STR]];
+        $this->execute($sql, $params);
+    }
+
+    public function validate($empNo, $empName, $action)
     {
         $errors = [];
         if (!$empNo) {
@@ -41,8 +48,10 @@ class Employee extends DbModel
         } else {
             $stmt = $this->pdo->query("SELECT COUNT(*) FROM employees WHERE emp_no = $empNo");
             $result = $stmt->fetchColumn();
-            if ($result) {
+            if ($result && $action === 'create') {
                 $errors[] = '入力した社員番号はすでに使用されています';
+            } elseif (!$result && $action === 'update') {
+                $errors[] = '入力した社員番号はまだ登録されていません';
             }
         }
         if (!$empName) {

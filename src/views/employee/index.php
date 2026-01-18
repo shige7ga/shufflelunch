@@ -6,7 +6,7 @@
         </ul>
     <?php endforeach ?>
 <?php endif ?>
-<form action="/employee/create" method="post">
+<form action='<?php echo $formAction ?>' method="post">
     <div>
         <label for="empNo">社員番号：</label>
         <input type="number" id="empNo" name="empNo">
