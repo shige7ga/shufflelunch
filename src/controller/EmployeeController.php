@@ -2,26 +2,31 @@
 
 class EmployeeController extends Controller
 {
+    private $inputEmpInfo;
+    private $model;
+    public function __construct($application)
+    {
+        parent::__construct($application);
+        $this->model = $this->dbManager->getModel('Employee');
+        $this->inputEmpInfo = $this->initializeInputEmpInfo();
+    }
+
     public function index()
     {
         if (!$this->request->isPost()) {
             throw new HttpNotFoundException;
         }
-        $inputEmpInfo = [
-            'empNo' => '',
-            'empName' => '',
-        ];
-        $employees = $this->dbManager->getModel('Employee')->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員登録',
-            'formTitle' => '登録フォーム',
-            'formAction' => '/employee/create',
-            'actionName' => 'create',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '登録する',
-            'employees' => $employees,
-            'errors' => [],
-        ]);
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員登録',
+            '登録フォーム',
+            '/employee/create',
+            'create',
+            $this->inputEmpInfo,
+            '登録する',
+            $employees,
+            []);
+        return $this->render($valiables);
     }
 
     public function create()
@@ -31,31 +36,25 @@ class EmployeeController extends Controller
         }
         $empNo = $_POST['empNo'];
         $empName = $_POST['empName'];
-        $inputEmpInfo = [
-            'empNo' => $empNo,
-            'empName' => $empName,
-        ];
+        $this->setInputEmpInfo($empNo, $empName);
+
         $errors = [];
-        $employeeModel = $this->dbManager->getModel('Employee');
-        $errors = $employeeModel->validate($empNo, $empName, __FUNCTION__);
+        $errors = $this->model->validate($empNo, $empName, __FUNCTION__);
         if (empty($errors)) {
-            $employeeModel->registerEmployee($empNo, $empName);
-            $inputEmpInfo = [
-                'empNo' => '',
-                'empName' => '',
-            ];
+            $this->model->registerEmployee($empNo, $empName);
+            $this->inputEmpInfo = $this->initializeInputEmpInfo();
         }
-        $employees = $employeeModel->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員登録',
-            'formTitle' => '登録フォーム',
-            'formAction' => '/employee/create',
-            'actionName' => 'create',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '登録する',
-            'employees' => $employees,
-            'errors' => $errors,
-        ], 'index');
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員登録',
+            '登録フォーム',
+            '/employee/create',
+            'create',
+            $this->inputEmpInfo,
+            '登録する',
+            $employees,
+            $errors);
+        return $this->render($valiables, 'index');
     }
 
     public function updateIndex()
@@ -63,21 +62,17 @@ class EmployeeController extends Controller
         if (!$this->request->isPost()) {
             throw new HttpNotFoundException;
         }
-        $inputEmpInfo = [
-            'empNo' => '',
-            'empName' => '',
-        ];
-        $employees = $this->dbManager->getModel('Employee')->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員情報更新',
-            'formTitle' => '更新フォーム',
-            'formAction' => '/employee/update',
-            'actionName' => 'update',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '更新する',
-            'employees' => $employees,
-            'errors' => [],
-        ], 'index');
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員情報更新',
+            '更新フォーム',
+            '/employee/update',
+            'update',
+            $this->inputEmpInfo,
+            '更新する',
+            $employees,
+            []);
+        return $this->render($valiables, 'index');
     }
 
     public function update()
@@ -87,32 +82,25 @@ class EmployeeController extends Controller
         }
         $empNo = $_POST['empNo'];
         $empName = $_POST['empName'];
-        $inputEmpInfo = [
-            'empNo' => $empNo,
-            'empName' => $empName,
-        ];
+        $this->setInputEmpInfo($empNo, $empName);
 
         $errors = [];
-        $employeeModel = $this->dbManager->getModel('Employee');
-        $errors = $employeeModel->validate($empNo, $empName, __FUNCTION__);
+        $errors = $this->model->validate($empNo, $empName, __FUNCTION__);
         if (empty($errors)) {
-            $employeeModel->updateEmployee($empNo, $empName);
-            $inputEmpInfo = [
-                'empNo' => '',
-                'empName' => '',
-            ];
+            $this->model->updateEmployee($empNo, $empName);
+            $this->inputEmpInfo = $this->initializeInputEmpInfo();
         }
-        $employees = $employeeModel->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員情報更新',
-            'formTitle' => '更新フォーム',
-            'formAction' => '/employee/update',
-            'actionName' => 'update',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '更新する',
-            'employees' => $employees,
-            'errors' => $errors,
-        ], 'index');
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員情報更新',
+            '更新フォーム',
+            '/employee/update',
+            'update',
+            $this->inputEmpInfo,
+            '更新する',
+            $employees,
+            $errors);
+        return $this->render($valiables, 'index');
     }
 
     public function deleteIndex()
@@ -120,21 +108,17 @@ class EmployeeController extends Controller
         if (!$this->request->isPost()) {
             throw new HttpNotFoundException;
         }
-        $inputEmpInfo = [
-            'empNo' => '',
-            'empName' => '',
-        ];
-        $employees = $this->dbManager->getModel('Employee')->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員情報削除',
-            'formTitle' => '削除フォーム',
-            'formAction' => '/employee/delete',
-            'actionName' => 'delete',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '削除する',
-            'employees' => $employees,
-            'errors' => [],
-        ], 'index');
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員情報削除',
+            '削除フォーム',
+            '/employee/delete',
+            'delete',
+            $this->inputEmpInfo,
+            '削除する',
+            $employees,
+            []);
+        return $this->render($valiables, 'index');
     }
 
     public function delete()
@@ -143,31 +127,61 @@ class EmployeeController extends Controller
             throw new HttpNotFoundException;
         }
         $empNo = $_POST['empNo'];
-        $inputEmpInfo = [
-            'empNo' => $empNo,
-        ];
+        $this->setInputEmpInfo($empNo);
 
         $errors = [];
-        $employeeModel = $this->dbManager->getModel('Employee');
-        $errors = $employeeModel->validate($empNo, '', __FUNCTION__);
+        $errors = $this->model->validate($empNo, '', __FUNCTION__);
         if (empty($errors)) {
-            $employeeModel->deleteEmployee($empNo);
-            $inputEmpInfo = [
-                'empNo' => '',
-                'empName' => '',
-            ];
+            $this->model->deleteEmployee($empNo);
+            $this->inputEmpInfo = $this->initializeInputEmpInfo();
         }
-        $employees = $employeeModel->fetchEmployees();
-        return $this->render([
-            'pageTitle' => '社員情報削除',
-            'formTitle' => '削除フォーム',
-            'formAction' => '/employee/delete',
-            'actionName' => 'delete',
-            'inputEmpInfo' => $inputEmpInfo,
-            'formButton' => '削除する',
-            'employees' => $employees,
-            'errors' => $errors,
-        ], 'index');
+        $employees = $this->model->fetchEmployees();
+        $valiables = $this->getVariables(
+            '社員情報削除',
+            '削除フォーム',
+            '/employee/delete',
+            'delete',
+            $this->inputEmpInfo,
+            '削除する',
+            $employees,
+            $errors);
+        return $this->render($valiables, 'index');
     }
 
+    private function mainIndexControl($valiables, $template = null)
+    {
+        if (!$this->request->isPost()) {
+            throw new HttpNotFoundException;
+        }
+        $employees = $this->model->fetchEmployees();
+        return $this->render($valiables, $template);
+    }
+
+    private function getVariables($pageTitle, $formTitle, $formAction, $actionName, $inputEmpInfo, $formButton, $employees, $errors)
+    {
+        $valiables = [];
+        $valiables['pageTitle'] = $pageTitle;
+        $valiables['formTitle'] = $formTitle;
+        $valiables['formAction'] = $formAction;
+        $valiables['actionName'] = $actionName;
+        $valiables['inputEmpInfo'] = $inputEmpInfo;
+        $valiables['formButton'] = $formButton;
+        $valiables['employees'] = $employees;
+        $valiables['errors'] = $errors;
+        return $valiables;
+    }
+
+    private function initializeInputEmpInfo()
+    {
+        return [
+            'empNo' => '',
+            'empName' => '',
+        ];
+    }
+
+    private function setInputEmpInfo($empNo, $empName = '')
+    {
+        $this->inputEmpInfo['empNo'] = $empNo;
+        $this->inputEmpInfo['empName'] = $empName;
+    }
 }
