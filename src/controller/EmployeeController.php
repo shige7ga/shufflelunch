@@ -4,70 +4,69 @@ class EmployeeController extends Controller
 {
     private $inputEmpInfo;
     private $model;
+    private $variables;
     public function __construct($application)
     {
         parent::__construct($application);
         $this->model = $this->dbManager->getModel('Employee');
-        $this->inputEmpInfo = $this->initializeInputEmpInfo();
+        $this->initializeInputEmpInfo();
     }
 
     public function index()
     {
-        $valiables = $this->getCreateVariables();
-        return $this->mainIndexControl($valiables);
+        $this->setCreateVariables();
+        return $this->mainIndexControl();
     }
 
     public function create()
     {
-        $valiables = $this->getCreateVariables();
-        return $this->mainActionControl($valiables, __FUNCTION__, 'index');
+        $this->setCreateVariables();
+        return $this->mainActionControl(__FUNCTION__, 'index');
     }
 
     public function updateIndex()
     {
-        $valiables = $this->getUpdateVariables();
-        return $this->mainIndexControl($valiables, 'index');
+        $this->setUpdateVariables();
+        return $this->mainIndexControl('index');
     }
 
     public function update()
     {
-        $valiables = $this->getUpdateVariables();
-        return $this->mainActionControl($valiables, __FUNCTION__, 'index');
+        $this->setUpdateVariables();
+        return $this->mainActionControl(__FUNCTION__, 'index');
     }
 
     public function deleteIndex()
     {
-        $valiables = $this->getDeleteVariables();
-        return $this->mainIndexControl($valiables, 'index');
+        $this->setDeleteVariables();
+        return $this->mainIndexControl('index');
     }
 
     public function delete()
     {
-        $valiables = $this->getDeleteVariables();
-        return $this->mainActionControl($valiables, __FUNCTION__, 'index');
+        $this->setDeleteVariables();
+        return $this->mainActionControl(__FUNCTION__, 'index');
     }
 
-    private function mainIndexControl($valiables, $template = null)
+    private function mainIndexControl($template = null)
     {
         if (!$this->request->isPost()) {
             throw new HttpNotFoundException;
         }
-        $valiables['employees'] = $this->model->fetchEmployees();
-        $valiables['inputEmpInfo'] = $this->inputEmpInfo;
-        $valiables['errors'] = [];
-        return $this->render($valiables, $template);
+        $this->variables['employees'] = $this->model->fetchEmployees();
+        $this->variables['inputEmpInfo'] = $this->inputEmpInfo;
+        $this->variables['errors'] = [];
+        return $this->render($this->variables, $template);
     }
 
-    private function mainActionControl($valiables, $actionName, $template = null)
+    private function mainActionControl($actionName, $template = null)
     {
          if (!$this->request->isPost()) {
             throw new HttpNotFoundException;
         }
         $empNo = $_POST['empNo'];
         $empName = '';
-        if ($actionName === 'delete') {
-            $empName = '';
-        } else {
+        if ($actionName !== 'delete') {
             $empName = $_POST['empName'];
         }
         $this->setInputEmpInfo($empNo, $empName);
@@ -76,12 +75,12 @@ class EmployeeController extends Controller
         $errors = $this->model->validate($empNo, $empName, $actionName);
         if (empty($errors)) {
             $this->execAction($empNo, $empName, $actionName);
-            $this->inputEmpInfo = $this->initializeInputEmpInfo();
+            $this->initializeInputEmpInfo();
         }
-        $valiables['employees'] = $this->model->fetchEmployees();
-        $valiables['inputEmpInfo'] = $this->inputEmpInfo;
-        $valiables['errors'] = $errors;
-        return $this->render($valiables, 'index');
+        $this->variables['employees'] = $this->model->fetchEmployees();
+        $this->variables['inputEmpInfo'] = $this->inputEmpInfo;
+        $this->variables['errors'] = $errors;
+        return $this->render($this->variables, 'index');
     }
 
     private function execAction($empNo, $empName, $actionName)
@@ -95,41 +94,36 @@ class EmployeeController extends Controller
         }
     }
 
-    private function getCreateVariables()
+    private function setCreateVariables()
     {
-        return $this->getVariables('社員登録', '登録フォーム', '/employee/create', 'create', '登録する');
+        $this->setVariables('社員登録', '登録フォーム', '/employee/create', 'create', '登録する');
     }
 
-    private function getUpdateVariables()
+    private function setUpdateVariables()
     {
-        return $this->getVariables('社員情報更新', '更新フォーム', '/employee/update', 'update', '更新する');
+        $this->setVariables('社員情報更新', '更新フォーム', '/employee/update', 'update', '更新する');
     }
 
-    private function getDeleteVariables()
+    private function setDeleteVariables()
     {
-        return  $this->getVariables('社員情報削除', '削除フォーム', '/employee/delete', 'delete', '削除する');
+        $this->setVariables('社員情報削除', '削除フォーム', '/employee/delete', 'delete', '削除する');
     }
 
-    private function getVariables($pageTitle, $formTitle, $formAction, $actionName, $formButton)
+    private function setVariables($pageTitle, $formTitle, $formAction, $actionName, $formButton)
     {
-        $valiables = [];
-        $valiables['pageTitle'] = $pageTitle;
-        $valiables['formTitle'] = $formTitle;
-        $valiables['formAction'] = $formAction;
-        $valiables['actionName'] = $actionName;
-        $valiables['formButton'] = $formButton;
-        return $valiables;
+        $this->variables['pageTitle'] = $pageTitle;
+        $this->variables['formTitle'] = $formTitle;
+        $this->variables['formAction'] = $formAction;
+        $this->variables['actionName'] = $actionName;
+        $this->variables['formButton'] = $formButton;
     }
 
     private function initializeInputEmpInfo()
     {
-        return [
-            'empNo' => '',
-            'empName' => '',
-        ];
+        $this->inputEmpInfo = ['empNo' => '', 'empName' => ''];
     }
 
-    private function setInputEmpInfo($empNo, $empName = '')
+    private function setInputEmpInfo($empNo = '', $empName = '')
     {
         $this->inputEmpInfo['empNo'] = $empNo;
         $this->inputEmpInfo['empName'] = $empName;
